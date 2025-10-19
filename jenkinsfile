@@ -11,24 +11,28 @@ pipeline {
         stage('Compile') {
             steps {
                echo 'mvn compile'
+                sh 'mvn compile'
             }
         }
 
         stage('Build') {
             steps {
                 echo 'mvn clean install'
+                sh ''mvn clean install'
             }
         }
 
         stage('Test') {
             steps {
                echo  'mvn test'
+               sh 'mvn test'
             }
         }
 
         stage('Package') {
             steps {
                echo 'mvn package'
+               sh 'mvn package'
             }
         }
     }
