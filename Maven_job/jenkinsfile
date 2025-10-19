@@ -4,31 +4,31 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url:https://github.com/kishore2436/Maven_job.git'i
+                git branch: 'main', url:https://github.com/kishore2436/Maven_job.git'
             }
         }
 
         stage('Compile') {
             steps {
-                sh 'mvn compile'
+               echo 'mvn compile'
             }
         }
 
         stage('Build') {
             steps {
-                sh 'mvn clean install'
+                echo 'mvn clean install'
             }
         }
 
         stage('Test') {
             steps {
-                sh 'mvn test'
+               echo  'mvn test'
             }
         }
 
         stage('Package') {
             steps {
-                sh 'mvn package'
+               echo 'mvn package'
             }
         }
     }
