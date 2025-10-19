@@ -35,10 +35,10 @@ pipeline {
 
     post {
         success {
-            echo '✅ Build and Package completed successfully!'
+            echo ' Build and Package completed successfully'
         }
         failure {
-            echo '❌ Build failed!'
+            echo ' Build failed'
         }
     }
 }
