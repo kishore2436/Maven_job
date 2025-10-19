@@ -1,0 +1,45 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url:https://github.com/kishore2436/Maven_job.git'
+            }
+        }
+
+        stage('Compile') {
+            steps {
+               echo 'mvn compile'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo 'mvn clean install'
+            }
+        }
+
+        stage('Test') {
+            steps {
+               echo  'mvn test'
+            }
+        }
+
+        stage('Package') {
+            steps {
+               echo 'mvn package'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo ' Build and Package completed successfully'
+        }
+        failure {
+            echo ' Build failed'
+        }
+    }
+}
+
