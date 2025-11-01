@@ -1,58 +1,53 @@
 pipeline {
-    agent any
+  agent any
 
-    stages {
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/kishore2436/Maven_job.git'
-            }
-        }
+  tools {
+    maven 'Maven_3.8.6'
+  }
 
-        stage('Compile') {
-            steps {
-                echo 'Compiling project...'
-                sh 'mvn clean compile'
-            }
-        }
-
-        stage('Build') {
-            steps {
-                echo 'Building project...'
-                sh 'mvn clean install'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                echo 'Running tests...'
-                sh 'mvn test'
-            }
-        }
-
-        stage('Package') {
-            steps {
-                echo 'Packaging project...'
-                sh 'mvn package'
-
-                // Copy target folder to workspace (optional)
-                sh '''
-                echo "Copying target folder to workspace..."
-                cp -r target $WORKSPACE/
-                ls -la $WORKSPACE/target
-                '''
-            }
-        }
+  stages {
+    stage('Checkout') {
+      steps {
+        cleanWs()
+        git 'https://github.com/kishore2436/Maven_job.git'
+      }
     }
 
-    post {
-        success {
-            echo '✅ Build and Package completed successfully.'
-            echo "Target directory is located at: $WORKSPACE/target"
-        }
-        failure {
-            echo '❌ Build failed.'
-        }
+    stage('Compile') {
+      steps {
+        echo 'Compiling project...'
+        sh 'mvn -B clean compile'
+      }
     }
+
+    stage('Test') {
+      steps {
+        echo 'Running tests...'
+        sh 'mvn -B test'
+      }
+      post {
+        always {
+          junit '**/target/surefire-reports/*.xml'
+        }
+      }
+    }
+
+    stage('Package') {
+      steps {
+        echo 'Packaging project...'
+        sh 'mvn -B package'
+      }
+    }
+  }
+
+  post {
+    success {
+      echo '✅ Build and Package completed successfully.'
+      echo "Target directory is located at: $WORKSPACE/target"
+      archiveArtifacts artifacts: 'target/**', fingerprint: true
+    }
+    failure {
+      echo '❌ Build failed.'
+    }
+  }
 }
-
-
