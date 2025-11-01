@@ -4,7 +4,6 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Clone your Git repository into Jenkins workspace
                 git 'https://github.com/kishore2436/Maven_job.git'
             }
         }
@@ -35,7 +34,7 @@ pipeline {
                 echo 'Packaging project...'
                 sh 'mvn package'
 
-                // Copy the target folder explicitly to workspace (optional safeguard)
+                // Copy target folder to workspace (optional)
                 sh '''
                 echo "Copying target folder to workspace..."
                 cp -r target $WORKSPACE/
@@ -56,15 +55,4 @@ pipeline {
     }
 }
 
-    }
-
-    post {
-        success {
-            echo ' Build and Package completed successfully'
-        }
-        failure {
-            echo ' Build failed'
-        }
-    }
-}
 
