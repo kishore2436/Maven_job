@@ -4,37 +4,58 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
+                // Clone your Git repository into Jenkins workspace
                 git 'https://github.com/kishore2436/Maven_job.git'
             }
         }
 
         stage('Compile') {
             steps {
-               echo 'mvn compile'
-                sh 'mvn compile'
+                echo 'Compiling project...'
+                sh 'mvn clean compile'
             }
         }
 
         stage('Build') {
             steps {
-                echo 'mvn clean install'
+                echo 'Building project...'
                 sh 'mvn clean install'
             }
         }
 
         stage('Test') {
             steps {
-               echo  'mvn test'
-               sh 'mvn test'
+                echo 'Running tests...'
+                sh 'mvn test'
             }
         }
 
         stage('Package') {
             steps {
-               echo 'mvn package'
-               sh 'mvn package'
+                echo 'Packaging project...'
+                sh 'mvn package'
+
+                // Copy the target folder explicitly to workspace (optional safeguard)
+                sh '''
+                echo "Copying target folder to workspace..."
+                cp -r target $WORKSPACE/
+                ls -la $WORKSPACE/target
+                '''
             }
         }
+    }
+
+    post {
+        success {
+            echo '✅ Build and Package completed successfully.'
+            echo "Target directory is located at: $WORKSPACE/target"
+        }
+        failure {
+            echo '❌ Build failed.'
+        }
+    }
+}
+
     }
 
     post {
