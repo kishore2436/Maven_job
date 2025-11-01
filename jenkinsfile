@@ -1,53 +1,57 @@
 pipeline {
-  agent any
+    agent any
 
-  tools {
-    maven 'Maven_3.9.11'
-  }
-
-  stages {
-    stage('Checkout') {
-      steps {
-        cleanWs()
-        git 'https://github.com/kishore2436/Maven_job.git'
-      }
+    tools {
+        // Use the exact Maven name configured in Jenkins (example: "Maven 3.9.11")
+        maven 'Maven 3.9.11'
     }
 
-    stage('Compile') {
-      steps {
-        echo 'Compiling project...'
-        sh 'mvn -B clean compile'
-      }
-    }
-
-    stage('Test') {
-      steps {
-        echo 'Running tests...'
-        sh 'mvn -B test'
-      }
-      post {
-        always {
-          junit '**/target/surefire-reports/*.xml'
+    stages {
+        stage('Checkout') {
+            steps {
+                cleanWs()
+                git 'https://github.com/kishore2436/Maven_job.git'
+            }
         }
-      }
+
+        stage('Compile') {
+            steps {
+                echo '🧱 Compiling project...'
+                sh 'mvn -B clean compile'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo '🏗️ Building project...'
+                sh 'mvn -B clean install'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo '🧪 Running tests...'
+                sh 'mvn -B test'
+            }
+        }
+
+        stage('Package') {
+            steps {
+                echo '📦 Packaging project...'
+                sh 'mvn -B package'
+            }
+        }
     }
 
-    stage('Package') {
-      steps {
-        echo 'Packaging project...'
-        sh 'mvn -B package'
-      }
+    post {
+        success {
+            echo '✅ Build and Package completed successfully!'
+            echo "🎯 Target directory: $WORKSPACE/target"
+            // Save the generated .jar and related files
+            archiveArtifacts artifacts: 'target/**', fingerprint: true
+        }
+        failure {
+            echo '❌ Build failed. Check logs for errors.'
+        }
     }
-  }
-
-  post {
-    success {
-      echo '✅ Build and Package completed successfully.'
-      echo "Target directory is located at: $WORKSPACE/target"
-      archiveArtifacts artifacts: 'target/**', fingerprint: true
-    }
-    failure {
-      echo '❌ Build failed.'
-    }
-  }
 }
